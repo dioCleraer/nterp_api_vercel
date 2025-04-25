@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
   try {
     await sql.connect(dbConfig);
     const keyword = req.query.search || '';
-    const result = await sql.query`SELECT TOP 10 VENDOR_NO, VENDOR_NAME FROM S_ST005 WHERE VENDOR_NAME LIKE '%' + ${keyword} + '%'`;
+    const result = await sql.query'SELECT TOP 10 VENDOR_NO, VENDOR_NAME FROM S_ST005 WHERE VENDOR_NAME LIKE %' + ${keyword} + '%';
     res.status(200).json(result.recordset);
   } catch (err) {
     res.status(500).json({ error: err.message });
