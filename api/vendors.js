@@ -7,15 +7,22 @@ module.exports = async (req, res) => {
     server: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT),
     database: process.env.DB_NAME,
-    options: { encrypt: false }
+    options: {
+      encrypt: false,
+    },
   };
 
   try {
     await sql.connect(dbConfig);
     const keyword = req.query.search || '';
-    const result = await sql.query'SELECT TOP 10 VENDOR_NO, VENDOR_NAME FROM S_ST005 WHERE VENDOR_NAME LIKE %' + ${keyword} + '%';
+    const result = await sql.query(`
+      SELECT TOP 10 VENDOR_NO, VENDOR_NAME
+      FROM S_ST005
+      WHERE VENDOR_NAME LIKE '%${keyword}%'
+    `);
     res.status(200).json(result.recordset);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('DB ERROR:', err); // 로그 출력
+    res.status(500).json({ error: err.message || 'Internal Server Error' });
   }
 };
